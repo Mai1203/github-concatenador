@@ -30,7 +30,7 @@ export default function Home() {
       <div className="bg-gray-950/80 backdrop-blur-sm rounded-2xl p-8 shadow-2xl max-w-4xl w-full flex flex-col md:flex-row gap-10 items-center">
         {/* Imagen */}
         <div className="hidden md:block">
-          <Image src="/github-logo.png" alt="GitHub Logo" width={160} height={160} />
+          <Image src="/img/github-logo.png" alt="GitHub Logo" width={160} height={160} />
         </div>
 
         {/* Formulario */}
