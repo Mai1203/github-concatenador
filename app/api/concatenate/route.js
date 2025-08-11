@@ -2,12 +2,20 @@ import { NextResponse } from 'next/server';
 import axios from 'axios';
 import { Buffer } from 'buffer';
 
+// Archivos específicos a ignorar
+const ignoredFiles = ['README.md', 'package-lock.json'];
+
+// Extensiones a ignorar (en minúscula)
+const ignoredExtensions = ['.png', '.jpg', '.jpeg', '.svg', '.gif', '.webp', '.json'];
+
+
 export async function POST(req) {
   const { repo, folder } = await req.json();
   const githubToken = process.env.GITHUB_TOKEN;
   const apiBaseUrl = `https://api.github.com/repos/${repo}/contents`;
 
   async function fetchFolderContents(folderPath) {
+    console.log('GitHub Token:', githubToken ? '✔️ Presente' : '❌ No definido');
     try {
       const response = await axios.get(`${apiBaseUrl}/${folderPath}`, {
         headers: {
@@ -38,7 +46,18 @@ export async function POST(req) {
 
   async function processFolder(folderPath, structure = '', output = '') {
     const items = await fetchFolderContents(folderPath);
+  
     for (const item of items) {
+      const isIgnoredFile = ignoredFiles.includes(item.name);
+      const isIgnoredExtension = ignoredExtensions.some(ext =>
+        item.name.toLowerCase().endsWith(ext)
+      );
+  
+      if (isIgnoredFile || isIgnoredExtension) {
+        console.log(`⛔ Archivo ignorado: ${item.name}`);
+        continue;
+      }
+  
       if (item.type === 'file') {
         const content = await fetchFileContent(item.url);
         output += `---\nArchivo: ${folderPath}/${item.name}\n---\n${content}\n\n`;
@@ -49,8 +68,10 @@ export async function POST(req) {
         output = result.output;
       }
     }
+  
     return { structure, output };
   }
+  
 
   try {
     const { structure, output } = await processFolder(folder || '');
