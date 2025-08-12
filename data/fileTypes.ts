@@ -47,13 +47,13 @@ export const FILE_TYPES: FileType[] = [
   { ext: ".ps1", name: "PowerShell", icon: "vscode-icons:file-type-powershell", category: "scripts" },
 
   // Imagenes
-  { ext: ".ico", name: "Icono", icon: "mdi:file", category: "other" },
-  { ext: ".png", name: "Imagen", icon: "mdi:file-image", category: "other" },
-  { ext: ".jpg", name: "Imagen", icon: "mdi:file-image-outline", category: "other" },
-  { ext: ".jpeg", name: "Imagen", icon: "mdi:file-image", category: "other" },
-  { ext: ".gif", name: "Imagen", icon: "mdi:image-move", category: "other" },
-  { ext: ".svg", name: "Imagen", icon: "vscode-icons:file-type-svg", category: "other" },
-  { ext: ".webp", name: "Imagen", icon: "vscode-icons:file-type-webp", category: "other" },
+  { ext: ".ico", name: "Icono", icon: "mdi:file", category: "images" },
+  { ext: ".png", name: "Imagen", icon: "mdi:file-image", category: "images" },
+  { ext: ".jpg", name: "Imagen", icon: "mdi:file-image-outline", category: "images" },
+  { ext: ".jpeg", name: "Imagen", icon: "mdi:file-image", category: "images" },
+  { ext: ".gif", name: "Imagen", icon: "mdi:image-move", category: "images" },
+  { ext: ".svg", name: "Imagen", icon: "vscode-icons:file-type-svg", category: "images" },
+  { ext: ".webp", name: "Imagen", icon: "vscode-icons:file-type-webp", category: "images" },
 
   //Videos y audio
   { ext: ".mp4", name: "Video", icon: "mdi:file-video", category: "other" },
