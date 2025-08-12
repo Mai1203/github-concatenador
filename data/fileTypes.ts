@@ -1,51 +1,66 @@
-// src/data/fileTypes.ts
 
 export interface FileType {
   ext: string;
   name: string;
-  icon: string;
+  icon: string; // clave de icono para @iconify/react
   category: string;
 }
 
 export const FILE_TYPES: FileType[] = [
-  // Lenguajes de programación
-  { ext: ".js", name: "JavaScript", icon: "/img/logoTipoArchivo/js.png", category: "programming" },
-  { ext: ".ts", name: "TypeScript", icon: "/img/ts.png", category: "programming" },
-  { ext: ".py", name: "Python", icon: "/img/python.png", category: "programming" },
-  { ext: ".java", name: "Java", icon: "/img/java.png", category: "programming" },
-  { ext: ".php", name: "PHP", icon: "/img/php.png", category: "programming" },
-  { ext: ".rb", name: "Ruby", icon: "/img/ruby.png", category: "programming" },
-  { ext: ".go", name: "Go", icon: "/img/go.png", category: "programming" },
-  { ext: ".rs", name: "Rust", icon: "/img/rust.png", category: "programming" },
-  { ext: ".cs", name: "C#", icon: "/img/csharp.png", category: "programming" },
-  { ext: ".swift", name: "Swift", icon: "/img/swift.png", category: "programming" },
-  { ext: ".kt", name: "Kotlin", icon: "/img/kotlin.png", category: "programming" },
-  { ext: ".dart", name: "Dart", icon: "/img/dart.png", category: "programming" },
-  
   // Frontend
-  { ext: ".jsx", name: "JSX", icon: "/img/react.png", category: "frontend" },
-  { ext: ".tsx", name: "TSX", icon: "/img/react.png", category: "frontend" },
-  { ext: ".vue", name: "Vue", icon: "/img/vue.png", category: "frontend" },
-  { ext: ".svelte", name: "Svelte", icon: "/img/svelte.png", category: "frontend" },
-  
+  { ext: ".jsx", name: "JSX", icon: "vscode-icons:file-type-reactjs", category: "frontend" },
+  { ext: ".tsx", name: "TSX", icon: "vscode-icons:file-type-reactts", category: "frontend" },
+  { ext: ".vue", name: "Vue", icon: "vscode-icons:file-type-vue", category: "frontend" },
+  { ext: ".svelte", name: "Svelte", icon: "vscode-icons:file-type-svelte", category: "frontend" },
+
+  // Lenguajes de programación
+  { ext: ".js", name: "JavaScript", icon: "vscode-icons:file-type-js", category: "programming" },
+  { ext: ".ts", name: "TypeScript", icon: "vscode-icons:file-type-typescript", category: "programming" },
+  { ext: ".py", name: "Python", icon: "vscode-icons:file-type-python", category: "programming" },
+  { ext: ".java", name: "Java", icon: "vscode-icons:file-type-java", category: "programming" },
+  { ext: ".php", name: "PHP", icon: "vscode-icons:file-type-php", category: "programming" },
+  { ext: ".rb", name: "Ruby", icon: "vscode-icons:file-type-ruby", category: "programming" },
+  { ext: ".go", name: "Go", icon: "vscode-icons:file-type-go", category: "programming" },
+  { ext: ".rs", name: "Rust", icon: "vscode-icons:file-type-rust", category: "programming" },
+  { ext: ".cs", name: "C#", icon: "vscode-icons:file-type-csharp", category: "programming" },
+  { ext: ".swift", name: "Swift", icon: "vscode-icons:file-type-swift", category: "programming" },
+  { ext: ".kt", name: "Kotlin", icon: "vscode-icons:file-type-kotlin", category: "programming" },
+  { ext: ".dart", name: "Dart", icon: "vscode-icons:file-type-dartlang", category: "programming" },
+
   // Estilos
-  { ext: ".css", name: "CSS", icon: "/img/css.png", category: "styles" },
-  { ext: ".scss", name: "SCSS", icon: "/img/sass.png", category: "styles" },
-  { ext: ".less", name: "LESS", icon: "/img/less.png", category: "styles" },
-  
+  { ext: ".css", name: "CSS", icon: "vscode-icons:file-type-css", category: "styles" },
+  { ext: ".scss", name: "SCSS", icon: "vscode-icons:file-type-scss", category: "styles" },
+  { ext: ".less", name: "LESS", icon: "vscode-icons:file-type-less", category: "styles" },
+
   // Marcado
-  { ext: ".html", name: "HTML", icon: "/img/html.png", category: "markup" },
-  { ext: ".md", name: "Markdown", icon: "/img/markdown.png", category: "markup" },
-  
+  { ext: ".html", name: "HTML", icon: "vscode-icons:file-type-html", category: "markup" },
+  { ext: ".md", name: "Markdown", icon: "vscode-icons:file-type-markdown", category: "markup" },
+
   // Configuración
-  { ext: ".json", name: "JSON", icon: "/img/json.png", category: "config" },
-  { ext: ".yml", name: "YAML", icon: "/img/yaml.png", category: "config" },
-  { ext: ".toml", name: "TOML", icon: "/img/toml.png", category: "config" },
-  
+  { ext: ".json", name: "JSON", icon: "vscode-icons:file-type-json", category: "config" },
+  { ext: ".yml", name: "YAML", icon: "vscode-icons:file-type-yaml", category: "config" },
+  { ext: ".toml", name: "TOML", icon: "vscode-icons:file-type-toml", category: "config" },
+
   // Scripts
-  { ext: ".sh", name: "Shell", icon: "/img/shell.png", category: "scripts" },
-  { ext: ".bat", name: "Batch", icon: "/img/batch.png", category: "scripts" },
-  { ext: ".ps1", name: "PowerShell", icon: "/img/powershell.png", category: "scripts" },
+  { ext: ".sh", name: "Shell", icon: "vscode-icons:file-type-shell", category: "scripts" },
+  { ext: ".bat", name: "Batch", icon: "vscode-icons:file-type-bat", category: "scripts" },
+  { ext: ".ps1", name: "PowerShell", icon: "vscode-icons:file-type-powershell", category: "scripts" },
+
+  // Imagenes
+  { ext: ".ico", name: "Icono", icon: "mdi:file", category: "other" },
+  { ext: ".png", name: "Imagen", icon: "mdi:file-image", category: "other" },
+  { ext: ".jpg", name: "Imagen", icon: "mdi:file-image-outline", category: "other" },
+  { ext: ".jpeg", name: "Imagen", icon: "mdi:file-image", category: "other" },
+  { ext: ".gif", name: "Imagen", icon: "mdi:image-move", category: "other" },
+  { ext: ".svg", name: "Imagen", icon: "vscode-icons:file-type-svg", category: "other" },
+  { ext: ".webp", name: "Imagen", icon: "vscode-icons:file-type-webp", category: "other" },
+
+  //Videos y audio
+  { ext: ".mp4", name: "Video", icon: "mdi:file-video", category: "other" },
+  { ext: ".webm", name: "Video", icon: "mdi:file-video", category: "other" },
+  { ext: ".ogv", name: "Video", icon: "mdi:file-video", category: "other" },
+  { ext: ".mp3", name: "Audio", icon: "mdi:file-music", category: "other" },
+  { ext: ".m4a", name: "Audio", icon: "mdi:file-music", category: "other" },
 ];
 
 export const CATEGORIES = [

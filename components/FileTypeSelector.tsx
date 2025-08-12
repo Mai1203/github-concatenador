@@ -1,5 +1,5 @@
 import { FileType } from "@/data/fileTypes";
-import Image from "next/image";
+import { Icon } from "@iconify/react";
 
 interface FileTypeSelectorProps {
   fileTypes: FileType[];
@@ -50,12 +50,7 @@ export default function FileTypeSelector({
               onClick={() => onToggle(type.ext)}
             >
               <div className="relative w-10 h-10 mb-2">
-                <Image
-                  src={type.icon}
-                  alt={type.name}
-                  fill
-                  className="object-contain"
-                />
+                <Icon icon={type.icon} className="w-full h-full" />
               </div>
               <span className="text-xs text-gray-200 text-center">
                 {type.name}
