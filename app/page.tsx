@@ -1,7 +1,10 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
+import Prism from "prismjs";
+import "prismjs/themes/prism-tomorrow.css";
+
 import { FILE_TYPES, DEFAULT_SELECTED_TYPES } from "@/data/fileTypes";
 import FileTypeSelector from "@/components/FileTypeSelector";
 
@@ -14,6 +17,12 @@ export default function Home() {
   const [selectedFileTypes, setSelectedFileTypes] = useState<string[]>(DEFAULT_SELECTED_TYPES);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   
+  useEffect(() => {
+    if (output) {
+      Prism.highlightAll();
+    }
+  });
+
   const toggleFileType = (ext: string) => {
     setSelectedFileTypes(prev => 
       prev.includes(ext) 
@@ -185,13 +194,9 @@ export default function Home() {
               </button>
             </div>
             <div className="relative">
-              <textarea
-                ref={textareaRef}
-                className="w-full bg-gray-900 text-green-400 p-4 rounded-lg text-sm h-[300px] md:h-[400px] resize-none 
-                  font-mono border border-gray-700"
-                value={output}
-                readOnly
-              />
+              <pre className="language-javascript">
+                <code>{output}</code>
+              </pre>
             </div>
           </div>
         )}
