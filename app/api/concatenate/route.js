@@ -2,10 +2,9 @@ import { NextResponse } from 'next/server';
 import axios from 'axios';
 
 const ignoredFiles = ['README.md', 'package-lock.json', '.gitignore', '.env'];
-const ignoredExtensions = ['.png', '.jpg', '.jpeg', '.svg', '.gif', '.webp', '.json', '.lock', '.log'];
 
 export async function POST(req) {
-  const { repo, folder } = await req.json();
+  const { repo, folder, selectedFileTypes } = await req.json();
   const githubToken = process.env.GITHUB_TOKEN;
   const apiBaseUrl = `https://api.github.com/repos/${repo}/contents`;
 
@@ -18,16 +17,14 @@ export async function POST(req) {
 
   // Función mejorada para obtener contenido de carpetas
   async function fetchFolderContents(folderPath) {
-    console.log('GitHub Token:', githubToken ? '✔️ Presente' : '❌ No definido');
-    
     try {
       const response = await axios.get(`${apiBaseUrl}/${folderPath}`, {
         headers: {
           Authorization: `Bearer ${githubToken}`,
           Accept: 'application/vnd.github.v3+json',
-          'User-Agent': 'GitHub-Concatenator-App' // Necesario para la API de GitHub
+          'User-Agent': 'GitHub-Concatenator-App'
         },
-        timeout: 15000 // Timeout de 15 segundos
+        timeout: 15000
       });
       return response.data;
     } catch (error) {
@@ -51,18 +48,13 @@ export async function POST(req) {
       const response = await axios.get(fileUrl, {
         headers: {
           Authorization: `Bearer ${githubToken}`,
-          Accept: 'application/vnd.github.v3.raw', // Obtener contenido en formato raw
+          Accept: 'application/vnd.github.v3.raw',
           'User-Agent': 'GitHub-Concatenator-App'
         },
         timeout: 10000
       });
 
-      // Para archivos pequeños, simplemente retornamos el contenido
-      if (response.data.length < 100000) { // 100KB
-        return response.data;
-      }
-      
-      return `[Archivo demasiado grande para mostrar: ${(response.data.length / 1024).toFixed(2)} KB]`;
+      return response.data || '';
     } catch (error) {
       console.error('Error obteniendo archivo:', {
         url: fileUrl,
@@ -73,50 +65,60 @@ export async function POST(req) {
     }
   }
 
-  // Función recursiva mejorada para procesar carpetas
-  async function processFolder(folderPath, structure = '', output = '', depth = 0) {
-    if (depth > 10) { // Límite de profundidad
-      return { structure, output };
-    }
+  // Nueva versión: Construye la estructura y el contenido por separado
+  async function buildProjectStructure(basePath = '') {
+    let structure = '';
+    let output = '';
     
     try {
-      const items = await fetchFolderContents(folderPath);
+      const items = await fetchFolderContents(basePath);
+      const indent = basePath.split('/').length;
       
       for (const item of items) {
+        const fullPath = basePath ? `${basePath}/${item.name}` : item.name;
         const isIgnoredFile = ignoredFiles.includes(item.name);
-        const isIgnoredExtension = ignoredExtensions.some(ext => 
-          item.name.toLowerCase().endsWith(ext)
-        );
+        
+        // Verificar si es un archivo y si tiene una extensión permitida
+        const isFile = item.type === 'file';
+        const fileExtension = item.name.includes('.') 
+          ? item.name.substring(item.name.lastIndexOf('.')).toLowerCase() 
+          : '';
+        
+        const isAllowedExtension = selectedFileTypes?.length > 0 
+          ? selectedFileTypes.includes(fileExtension)
+          : true;
 
-        if (isIgnoredFile || isIgnoredExtension) {
+        if (isIgnoredFile || (isFile && !isAllowedExtension)) {
           console.log(`⛔ Archivo ignorado: ${item.name}`);
           continue;
         }
 
-        if (item.type === 'file') {
+        if (isFile) {
+          // Agregar a la estructura
+          structure += `${'│   '.repeat(indent)}├── ${item.name}\n`;
+          
+          // Obtener contenido
           const content = await fetchFileContent(item.download_url || item.url);
-          output += `\n---\nArchivo: ${folderPath}/${item.name}\n---\n${content}\n\n`;
+          output += `\n---\nArchivo: ${fullPath}\n---\n${content}\n\n`;
         } else if (item.type === 'dir') {
-          structure += `${'  '.repeat(depth)}├── ${item.name}/\n`;
-          const result = await processFolder(
-            `${folderPath}/${item.name}`, 
-            structure, 
-            output, 
-            depth + 1
-          );
-          structure = result.structure;
-          output = result.output;
+          // Agregar directorio a la estructura
+          structure += `${'│   '.repeat(indent)}├── ${item.name}/\n`;
+          
+          // Procesar recursivamente el subdirectorio
+          const subResult = await buildProjectStructure(fullPath);
+          structure += subResult.structure;
+          output += subResult.output;
         }
       }
     } catch (error) {
-      output += `\n[Error procesando carpeta ${folderPath}: ${error.message}]\n`;
+      output += `\n[Error procesando carpeta ${basePath}: ${error.message}]\n`;
     }
     
     return { structure, output };
   }
 
   try {
-    const { structure, output } = await processFolder(folder || '');
+    const { structure, output } = await buildProjectStructure(folder || '');
     const fullOutput = `# Estructura del proyecto:\n${structure}\n\n# Contenido:\n${output}`;
     return NextResponse.json({ output: fullOutput });
   } catch (error) {
