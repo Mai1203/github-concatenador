@@ -9,7 +9,8 @@ import { FILE_TYPES, DEFAULT_SELECTED_TYPES } from "@/data/fileTypes";
 import FileTypeSelector from "@/components/FileTypeSelector";
 
 export default function Home() {
-  const [repo, setRepo] = useState("");
+  const [user, setUser] = useState("");
+  const [project, setProject] = useState(""); 
   const [folder, setFolder] = useState("");
   const [output, setOutput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -41,11 +42,20 @@ export default function Home() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    
+    // Validación básica
+    if (!user || !project) {
+      setOutput("Por favor ingresa usuario y nombre del proyecto");
+      return;
+    }
+    
     setLoading(true);
     setOutput("");
     setCopied(false);
 
     try {
+      const repo = `${user}/${project}`; // Combinamos usuario y proyecto
+      
       const res = await fetch("/api/concatenate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -98,20 +108,39 @@ export default function Home() {
         <div className="flex flex-col lg:flex-row gap-6">
           <div className="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-6 md:p-8 border border-gray-700 shadow-xl flex-1">
             <form onSubmit={handleSubmit} className="space-y-5">
-              <div>
-                <label htmlFor="repo" className="block text-sm font-medium text-gray-300 mb-1">
-                  Repositorio
-                </label>
-                <input
-                  id="repo"
-                  type="text"
-                  placeholder="usuario/repositorio (ej: Mai1203/gamification-app)"
-                  className="w-full bg-gray-700/50 text-white px-4 py-3 rounded-lg outline-none 
-                    focus:ring-2 ring-purple-500 border border-gray-600"
-                  value={repo}
-                  onChange={(e) => setRepo(e.target.value)}
-                  required
-                />
+              {/* Campos divididos para usuario y proyecto */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="user" className="block text-sm font-medium text-gray-300 mb-1">
+                    Usuario/Organización
+                  </label>
+                  <input
+                    id="user"
+                    type="text"
+                    placeholder="github"
+                    className="w-full bg-gray-700/50 text-white px-4 py-3 rounded-lg outline-none 
+                      focus:ring-2 ring-purple-500 border border-gray-600"
+                    value={user}
+                    onChange={(e) => setUser(e.target.value)}
+                    required
+                  />
+                </div>
+                
+                <div>
+                  <label htmlFor="project" className="block text-sm font-medium text-gray-300 mb-1">
+                    Nombre del Proyecto
+                  </label>
+                  <input
+                    id="project"
+                    type="text"
+                    placeholder="react"
+                    className="w-full bg-gray-700/50 text-white px-4 py-3 rounded-lg outline-none 
+                      focus:ring-2 ring-purple-500 border border-gray-600"
+                    value={project}
+                    onChange={(e) => setProject(e.target.value)}
+                    required
+                  />
+                </div>
               </div>
               
               <div>
@@ -121,7 +150,7 @@ export default function Home() {
                 <input
                   id="folder"
                   type="text"
-                  placeholder="Carpeta (ej: src o vacío)"
+                  placeholder="src (dejar vacío para raíz)"
                   className="w-full bg-gray-700/50 text-white px-4 py-3 rounded-lg outline-none 
                     focus:ring-2 ring-purple-500 border border-gray-600"
                   value={folder}
@@ -148,7 +177,7 @@ export default function Home() {
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
                     </svg>
-                    Concatenar
+                    Concatenar Proyecto
                   </>
                 )}
               </button>
@@ -172,26 +201,28 @@ export default function Home() {
               <h2 className="text-xl font-bold text-white">
                 Resultado
               </h2>
-              <button
-                onClick={handleCopy}
-                className="flex items-center gap-1 bg-gray-700 hover:bg-gray-600 px-3 py-1.5 rounded-lg text-sm transition-colors"
-              >
-                {copied ? (
-                  <>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 text-green-400">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                    </svg>
-                    ¡Copiado!
-                  </>
-                ) : (
-                  <>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184" />
-                    </svg>
-                    Copiar
-                  </>
-                )}
-              </button>
+              <div className="flex gap-2">
+                <button
+                  onClick={handleCopy}
+                  className="flex items-center gap-1 bg-gray-700 hover:bg-gray-600 px-3 py-1.5 rounded-lg text-sm transition-colors"
+                >
+                  {copied ? (
+                    <>
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 text-green-400">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                      </svg>
+                      ¡Copiado!
+                    </>
+                  ) : (
+                    <>
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184" />
+                      </svg>
+                      Copiar
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
             <div className="relative">
               <pre className="language-javascript">
